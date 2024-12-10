@@ -158,6 +158,13 @@ class Backtest:
                 profit = exit_price - entry_price
                 profit_pct = (exit_price - entry_price) / entry_price * 100
                 
+                # 打印调试信息
+                print(f"交易详情:")
+                print(f"入场价格: {entry_price}")
+                print(f"出场价格: {exit_price}")
+                print(f"盈亏: {profit}")
+                print(f"盈亏率: {profit_pct}%")
+                
                 # 存储简单数值
                 profits.append(float(profit))
                 profit_pcts.append(float(profit_pct))
@@ -192,9 +199,22 @@ class Backtest:
             self.performance_metrics['平均每笔收益'] = avg_profit
             self.performance_metrics['平均每笔收益率'] = f"{avg_profit_pct:.2f}%"
             
-            # 计算胜率
-            win_rate = len([p for p in profits if p > 0]) / len(profits) * 100
-            self.performance_metrics['胜率'] = f"{win_rate:.2f}%"
+            # 修改胜率计算
+            completed_trades = [p for p in profits if p is not None]  # 只计算已完成的交易
+            if completed_trades:
+                wins = len([p for p in completed_trades if p > 0])
+                losses = len([p for p in completed_trades if p < 0])
+                total_trades = len(completed_trades)
+                
+                win_rate = (wins / total_trades) * 100 if total_trades > 0 else 0
+                self.performance_metrics['胜率'] = f"{win_rate:.2f}%"
+                self.performance_metrics['完整交易数'] = total_trades
+                self.performance_metrics['未完成交易数'] = len(self.trades) - (total_trades * 2)  # 每笔完整交易包含买入和卖出
+            
+            # 添加更详细的统计
+            self.performance_metrics['盈利次数'] = len([p for p in profits if p > 0])
+            self.performance_metrics['亏损次数'] = len([p for p in profits if p < 0])
+            self.performance_metrics['平局次数'] = len([p for p in profits if p == 0])
             
             # 计算风险指标
             self.performance_metrics['最大单笔收益'] = float(np.max(profit_values))
