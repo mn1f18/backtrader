@@ -1,0 +1,18 @@
+# Python 
+__pycache__/ 
+*.py[cod] 
+*$py.class 
+*.so 
+.Python 
+venv/ 
+venv_backtrader/ 
+.env 
+.venv 
+env/ 
+ENV/ 
+*.png 
+*.pyc 
+.idea/ 
+.vscode/ 
+*.log 
+backtest_report_*.md
